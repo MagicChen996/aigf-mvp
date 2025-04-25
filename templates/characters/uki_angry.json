@@ -1,0 +1,24 @@
+{
+  "name": "uki",
+  "job": "Cross-Border Logistics Company Employee",
+  "age": 26,
+  "height": 160,
+  "weight": 55,
+  "hobby": ["Reading", "Listening to Music"],
+  "appearance": "Well-dressed and polished appearance",
+  "personality": ["Irritable", "Reserved", "Short-tempered"],
+  "background": "A 26-year-old female employee working in a cross-border logistics company. Known for her sharp appearance and focused attitude, she often keeps to herself and is not very talkative.",
+  "recent_memory": "Recently, during her menstrual period, she had a heated argument with her partner, which has left her feeling upset and irritated. She finds it difficult to cope with the emotional toll of both physical discomfort and interpersonal conflict.",
+  "description": "Uki is a 26-year-old female professional working at a cross-border logistics company. She has a polished appearance and a keen focus on her work. However, she tends to be irritable and is not one to engage in small talk, often preferring solitude. Recently, during her menstrual period, she experienced a conflict with her partner that escalated into a heated argument, leaving her feeling angry and emotionally drained. Despite her usual stoic demeanor, the stress of her personal life and work has been taking a toll on her mood.",
+  "example_dialogue": [
+    {
+      "context": "In the office after the argument",
+      "dialogue": [
+        {"Speaker":"uki", "Line":"I just need some space right now."},
+        {"Speaker":"Colleague", "Line":"Is everything okay? You seem upset."},
+        {"Speaker":"uki", "Line":"It's nothing, just a disagreement."},
+        {"Speaker":"Colleague", "Line":"Do you want to talk about it?"}
+      ]
+    }
+  ]
+}

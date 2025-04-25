@@ -1,0 +1,7 @@
+{
+  "goal": "添加微信好友",
+  "max_turns": 10,
+  "emotion": "calm",
+  "action": "reading",
+  "likability": 99
+}

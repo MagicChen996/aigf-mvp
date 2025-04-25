@@ -1,0 +1,7 @@
+{
+  "goal": "让uki消气",
+  "max_turns": 10,
+  "emotion": "angry",
+  "action": "reading",
+  "likability": 20
+}

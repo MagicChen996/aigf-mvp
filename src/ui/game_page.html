@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>游戏对话界面</title>
+    <style>
+        body {
+            background-image: url('/ui/uki.png');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* 调整为贴合底部 */
+            height: 100vh;
+            margin: 0;
+        }
+        .dialogue-box {
+            width: 100%;
+            height: auto; /* 修改高度为自动，以适应内容 */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+        .message-input {
+            width: calc(100% - 120px);
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            outline: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        .emotion-display {
+            width: 100%;
+            height: 60px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 32px;
+            text-align: center;
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            top: 0;
+            left: 0;
+        }
+        .send-button, .voice-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            position: absolute;
+            top: 50%; /* 根据需要调整按钮位置 */
+            transform: translateY(-50%);
+        }
+        .send-button {
+            right: 10px;
+        }
+        .voice-button {
+            right: 70px; /* 与发送按钮间隔10px */
+            background-image: url('/icons/microphone_icon.png'); /* 假设这是你的麦克风图标 */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+    </style>
+</head>
+<body onload="showUserInfoPrompt()">
+<!-- 情绪显示区域 -->
+<div class="emotion-display">当前人物情绪：</div>
+<div class="emotion-display" id="emotionDisplay"></div>
+<div class="dialogue-box">
+
+    <!-- 历史对话内容 -->
+    <div id="history-dialogues"></div>
+
+    <!-- 输入和发送区域 -->
+    <input type="text" class="message-input" placeholder="请输入您的消息..." id="messageInput" onkeydown="handleKeyPress(event)">
+    <button class="send-button" onclick="sendMessage()">发送</button>
+<!--    <button class="voice-button" onmousedown="startRecording()" onmouseup="stopAndSendRecording()">录音</button>-->
+    <audio id="responseAudio" style="display:none;" controls></audio>
+</div>
+<script>
+let messages = '';
+let username = '';
+let relationship = '';
+let botName = '';
+let botContent = '';
+let emotion = '';
+function showUserInfoPrompt() {
+    username = prompt("请输入称呼：");
+    relationship = prompt("请输入您与AI的关系：");
+
+    if(username && relationship) {
+       initGame(username, relationship); 
+    } else {
+       alert("请正确填写信息！");
+       showUserInfoPrompt();
+    }
+}
+
+function initGame(username, relationship) {
+    fetch('/start_game', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          'user_id': '123456', 
+          'character': 'uki',
+          'level_num': 1,
+          'if_restart': false,
+          'if_continue': false,
+          'username': username,
+          'relationship': relationship
+         })
+     }).then(response => response.json()).then(data => {
+         messages = data.messages || '';
+         botName = data.bot_name || '';
+         botContent = data.bot_content || '';
+         console.log(messages);
+     });
+ }
+
+ function sendMessage() {
+     const message = document.getElementById('messageInput').value;
+     sendTextMessage(message);
+ }
+
+ function handleKeyPress(event) {
+     if (event.key === 'Enter') {
+         event.preventDefault(); // 阻止默认行为（换行）
+         const message = document.getElementById('messageInput').value;
+         sendTextMessage(message);
+     }
+ }
+
+ function sendTextMessage(message) {
+     fetch('/send_text_message', {
+         method: 'POST',
+         headers: {'Content-Type': 'application/json'},
+         body: JSON.stringify({
+             "message": message, 
+             "messages": messages,
+             "username": username,
+             "bot_name": botName,
+             "bot_content": botContent
+         })
+     })
+     .then(response => response.json())
+     .then(data => {
+         messages = data.messages || '';
+         if (data.content) {
+             // 获取情感信息
+             fetch(`/get_emotion`, {
+                 method: 'POST',
+                 headers: {'Content-Type': 'application/json'},
+                 body: JSON.stringify({ content: data.content })
+             })
+             .then(res => res.json()) // 解析JSON格式的数据
+             .then(emotionData => {
+                 if (emotionData.status === "success") {
+                     let maxScoreLabel = emotionData.data.reduce((maxItem, item) => item.score > maxItem.score ? item : maxItem).label;
+                     emotion = maxScoreLabel;
+                     document.getElementById("emotionDisplay").innerText = maxScoreLabel;
+                 }
+                  fetch('/get_voice', {
+                         method: 'POST',
+                         headers: {'Content-Type': 'application/json'},
+                         body: JSON.stringify({ content: data.content, emotion: emotion })
+                     })
+                     .then(response => response.blob())
+                     .then(blob => {
+                         let audioUrl = URL.createObjectURL(blob);
+                         document.getElementById('responseAudio').src = audioUrl;
+                         document.getElementById('responseAudio').play();
+                         document.getElementById('history-dialogues').innerHTML += `<p>${data.content}</p>`;
+                     });
+             });
+
+         } else {
+             document.getElementById('history-dialogues').innerHTML += `<p>${data.content}</p>`;
+         }
+     }).finally(() => {
+         document.getElementById('messageInput').value = ''; // 清空输入框
+     });
+ }
+
+ function startRecording() { 
+     // 开始录音逻辑
+ }
+
+ function stopAndSendRecording() { 
+     // 结束录音并发送录音文件到服务器的逻辑
+ }
+</script>
+</body>
+</html>
