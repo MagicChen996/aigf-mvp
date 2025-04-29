@@ -41,7 +41,11 @@ I hope that all lonely people can have someone to accompany them
 1. Python安装与服务启动
 conda的安装自行百度
 > conda create -n aigf python=3.10.16 -y
+> 
 > conda activate aigf
+> 
 > mv settings_example.py settings.py (将前面申请的key全都填好)
+> 
 > cd aigf-mvp && pip install -r ./requirements.txt
+> 
 > python server.py
