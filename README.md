@@ -17,17 +17,21 @@ I hope that all lonely people can have someone to accompany them
 - 百度机器翻译
 
   先获取自己的 `api key`，地址戳这里 👉🏻 ：[创建你的 api key](https://fanyi-api.baidu.com/manage/developer)
+
   将获取到的`api key` 和 `app id` 分别填入 `settings.py` 文件中的 `BAIDU_APPKEY` 和 `BAIDU_APPID` 中。
 
 - MiniMax
   
   先获取自己的 `group id`，地址戳这里 👉🏻 ：[获取你的 group id](https://platform.minimaxi.com/user-center/basic-information)
+
   先获取自己的 `api key`，地址戳这里 👉🏻 ：[创建你的 api key](https://platform.minimaxi.com/user-center/basic-information/interface-key)
+
   将获取到的`group id` 和 `api key` 分别填入 `settings.py` 文件中的 `MINIMAX_GROUP_ID` 和 `MINIMAX_API_KEY` 中。
   
 - Huggingface Token(这一步需要VPN)
   
   先获取自己的 `token`，地址戳这里 👉🏻 ：[创建你的 token](https://huggingface.co/settings/tokens)
+
   将获取到的`token` 填入 `settings.py` 文件中的 `HUGGINGFACE_TOKEN` 中。
 
 ## 开发/使用
